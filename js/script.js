@@ -1,6 +1,8 @@
 {
   'use strict';
 
+  /* added during 6 - 7.2 modules  */
+
   const optArticleSelector = '.post',
     optActiveArticleSelector = '.posts .active',   
     optTitleSelector = '.post-title',
@@ -8,6 +10,9 @@
     optTitleListSelector = '.titles',
     optTitleListSelectorA = '.titles a',
     optArticleTagsSelector = '.post-tags .list';
+
+  /* added during 7.3 module */
+  const optTagsListSelector = '.tags .list';
 
   /* Generate Title Click Handler [DONE] */
 
@@ -104,6 +109,10 @@
   /* Generate Tags [DONE] */
 
   const generateTags = function (customSelector = '') {
+    
+    /* [NEW] create a new variable allTags with an empty array */
+    let allTags = [];
+
     /* find all articles */
     const articles = document.querySelectorAll(optArticleSelector);
     articles.innerHTML = '';
@@ -139,6 +148,12 @@
         const taglinkHTML = '<li><a href="#tag-' + tag + '"><span>' + tag + '</span></a></li>';
         // console.log('zapis: ', taglinkHTML);
 
+        /* [NEW] check if this link is NOT already in allTags */
+        if(allTags.indexOf(taglinkHTML) == -1){
+          /* [NEW] add generated code to allTags array */
+          allTags.push(taglinkHTML);
+        }
+
         /* add generated code to html variable */
         html = html + taglinkHTML;
         // console.log('zapis: ', taglinkHTML);
@@ -153,6 +168,11 @@
 
       /* END LOOP: for every article: */
 
+      /* [NEW] find list of tags in right column */
+      const tagList = document.querySelector('.tags');
+
+      /* [NEW] add html from allTags to tagList */
+      tagList.innerHTML = allTags.join(' ');
     }
 
     const links = document.querySelectorAll(optTitleListSelectorA);
