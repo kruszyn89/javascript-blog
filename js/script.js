@@ -2,7 +2,6 @@
   'use strict';
 
   /* added during 6 - 7.2 modules  */
-
   const optArticleSelector = '.post',
     optActiveArticleSelector = '.posts .active',   
     optTitleSelector = '.post-title',
@@ -12,7 +11,9 @@
     optArticleTagsSelector = '.post-tags .list';
 
   /* added during 7.3 module */
-  const optTagsListSelector = '.tags .list';
+  const optTagListSelector = '.tags.list',
+    optCloudClassCount = 5,
+    optCloudClassPrefix = 'tag-size-';
 
   /* Generate Title Click Handler [DONE] */
 
@@ -64,9 +65,6 @@
     const articles = document.querySelectorAll(optArticleSelector + customSelector);
     // console.log('pokaz: ', articles);
 
-    let html = '';
-    // console.log(html);
-
     for (let article of articles) {
 
       /* get the article id */
@@ -88,22 +86,51 @@
       titleList.innerHTML = titleList.innerHTML + linkHTML;
 
       /* insert link into titleList */
-      html += linkHTML;
+      // html += linkHTML;
       // console.log('pokaz: ', html);
 
     }
-
-    titleList.innerHTML = html;
  
-    // console.log('pokaz: ', titleList);
-
     const links = document.querySelectorAll(optTitleListSelectorA);
     // console.log('pokaz: ', links);
 
     for (let link of links) {
       link.addEventListener('click', titleClickHandler);
     }
+  };
 
+  const links = document.querySelectorAll(optTitleListSelectorA);
+  // console.log('pokaz: ', links);
+
+  for (let link of links) {
+    link.addEventListener('click', titleClickHandler);
+  }
+
+  
+  /* Calculate Tag Parameters [DONE]*/
+  
+  const calculateTagsParams = function (tags){
+    const params = { max: 0, min: 999999 };
+  
+    for (let tag in tags){
+      // console.log(tag + ' is used ' + tags[tag] + ' times'); 
+      params.max = Math.max(tags[tag], params.max);
+      params.min = Math.min(tags[tag], params.min);
+    }
+    // console.log(tag + ' is used ' + tags[tag] + ' times');
+    return params;
+  };
+
+  /* Calculate Tag Class [DONE]*/
+
+  const calculateTagClass = function(count, params) {
+    const normalizedCount = count - params.min;
+    const normalizedMax = params.max - params.min;
+    const percentage = normalizedCount / normalizedMax;
+    const classNumber = Math.floor(percentage * (optCloudClassCount - 1) + 1);
+    console.log(classNumber);  
+    return optCloudClassPrefix + classNumber;
+  
   };
 
   /* Generate Tags [DONE] */
@@ -111,26 +138,25 @@
   const generateTags = function (customSelector = '') {
     
     /* [NEW] create a new variable allTags with an empty array */
-    let allTags = [];
+    let allTags = {};
+    // console.log(allTags);
 
     /* find all articles */
     const articles = document.querySelectorAll(optArticleSelector);
-    articles.innerHTML = '';
+    // articles.innerHTML = '';
     // console.log('zapis: ', generateTags);
 
     /* START LOOP: for every article: */
     for (let article of articles) {
       // console.log('zapis: ', article);
       
-      let html = '';
-      
       /* find tags wrapper */
       const titleList = article.querySelector(optArticleTagsSelector + customSelector);
       // console.log('zapis: ', titleList);
 
       /* make html variable with empty string */
-      titleList.innerHTML='';
-      // console.log('titleList');
+      let html = '';
+      // console.log('html');
 
       /* get tags from data-tags attribute */
       const articleTags = article.getAttribute('data-tags');
@@ -145,44 +171,58 @@
         // console.log('zapis: ', tag); 
 
         /* generate HTML of the link */
-        const taglinkHTML = '<li><a href="#tag-' + tag + '"><span>' + tag + '</span></a></li>';
+        const tagLinkHTML = '<li><a href="#tag-' + tag + '"><span>' + tag + '</span></a></li>';
+        // console.log('zapis: ', taglinkHTML);
+
+        /* add generated code to html variable */
+        html += tagLinkHTML;
         // console.log('zapis: ', taglinkHTML);
 
         /* [NEW] check if this link is NOT already in allTags */
-        if(allTags.indexOf(taglinkHTML) == -1){
-          /* [NEW] add generated code to allTags array */
-          allTags.push(taglinkHTML);
+        if(!allTags[tag]) {
+          /* [NEW] add tag to allTags object */
+          allTags[tag] = 1;
+        } else {
+          allTags[tag]++;
         }
+        // console.log('zapis: ', allTags);
 
-        /* add generated code to html variable */
-        html = html + taglinkHTML;
-        // console.log('zapis: ', taglinkHTML);
+     
 
         /* END LOOP: for each tag */
-
+        /* insert HTML of all the links into the tags wrapper */
+        titleList.innerHTML = titleList.innerHTML + ' ' + tagLinkHTML;
       }
-
-      /* insert HTML of all the links into the tags wrapper */
-      titleList.innerHTML = html;
-      // console.log('zapis: ', html);
-
       /* END LOOP: for every article: */
 
       /* [NEW] find list of tags in right column */
-      const tagList = document.querySelector('.tags');
+      const tagList = document.querySelector(optTagListSelector);
 
-      /* [NEW] add html from allTags to tagList */
-      tagList.innerHTML = allTags.join(' ');
+      /* [NEW] create variable for all links HTML code */
+      let allTagsHTML = '';
+
+      const tagsParams = calculateTagsParams(allTags);
+      // console.log('tagsParams:', tagsParams);
+
+      /* [NEW] START LOOP: for each tag in allTags: */
+      for(let tag in allTags) {
+
+        /* [NEW] generate code of a link and add it to allTagsHTMdL */
+        const tagLinkHTML = '<li><a class="' + calculateTagClass(allTags[tag], tagsParams) + '" href="#tag-' + tag + '">' + tag + ' ' + '</a></li>';
+        allTagsHTML += tagLinkHTML;
+        // console.log('tagLinkHTML:', tagLinkHTML);
+
+        /* [NEW] END LOOP: for each tag in allTags: */
+      } 
+      /*[NEW] add HTML from allTagsHTML to tagList */
+      tagList.innerHTML =  allTagsHTML;
+      // console.log('tagsParams:', tagList.innerHTML);
     }
-
-    const links = document.querySelectorAll(optTitleListSelectorA);
-    // console.log('pokaz: ', links);
-
-    for (let link of links) {
-      link.addEventListener('click', titleClickHandler);
-    }
-
   };
+
+
+  
+
 
   /* Generate Tag Click Handler [DONE]*/
 
