@@ -128,11 +128,10 @@
     const normalizedMax = params.max - params.min;
     const percentage = normalizedCount / normalizedMax;
     const classNumber = Math.floor(percentage * (optCloudClassCount - 1) + 1);
-    console.log(classNumber);  
     return optCloudClassPrefix + classNumber;
   
   };
-
+  
   /* Generate Tags [DONE] */
 
   const generateTags = function (customSelector = '') {
