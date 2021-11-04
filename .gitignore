@@ -48,10 +48,10 @@ web_modules/
 # TypeScript cache
 *.tsbuildinfo
 
-# Optional npm cache directory
+# Opt.ional npm cache directory
 .npm
 
-# Optional eslint cache
+# Opt.ional eslint cache
 .eslintcache
 
 # Microbundle cache
@@ -60,7 +60,7 @@ web_modules/
 .rts2_cache_es/
 .rts2_cache_umd/
 
-# Optional REPL history
+# Opt.ional REPL history
 .node_repl_history
 
 # Output of 'npm pack'
